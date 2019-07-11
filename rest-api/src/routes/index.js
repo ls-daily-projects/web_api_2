@@ -7,7 +7,8 @@ import {
     findCommentById,
     find,
     findPostComments,
-    remove
+    remove,
+    update
 } from "../model"
 
 const apiRouter = Router()
@@ -133,6 +134,38 @@ apiRouter.delete("/posts/:postId", async (req, res, next) => {
         next(
             InternalServerError("The posts information could not be retrieved.")
         )
+    }
+})
+
+apiRouter.put("/posts/:postId", async (req, res, next) => {
+    const { postId } = req.params
+    const { title, contents } = req.body
+
+    if (!title || !contents) {
+        return next(
+            BadRequest("Please provide title and contents for the post.")
+        )
+    }
+
+    try {
+        const [post] = await findById(postId)
+
+        if (!post)
+            return next(
+                NotFound("The post with the specified ID does not exist.")
+            )
+
+        const isSuccess = await update(postId, { title, contents })
+
+        if (!isSuccess)
+            return next(InternalServerError("Couldn't update for some reason."))
+
+        const [newPost] = await findById(postId)
+
+        res.json(newPost)
+    } catch (error) {
+        console.log(error)
+        next(InternalServerError("The post information could not be modified."))
     }
 })
 
