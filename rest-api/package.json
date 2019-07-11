@@ -1,0 +1,38 @@
+{
+    "name": "rest-api",
+    "version": "0.1.0",
+    "description": "Web API Challenge I",
+    "main": "build",
+    "scripts": {
+        "clean:build": "rm -rf build",
+        "build:babel": "babel src -d build",
+        "build": "yarn clean:build && yarn build:babel",
+        "start": "NODE_ENV=production yarn build && node -r dotenv/config .",
+        "watch:babel": "babel -w src -d build",
+        "watch:nodemon": "nodemon -r dotenv/config .",
+        "watch": "NODE_ENV=development yarn build && yarn watch:nodemon & yarn watch:babel",
+        "knex": "babel-node node_modules/.bin/knex",
+        "knex:migrate:latest": "yarn knex migrate:latest --knexfile ./src/knexfile.js",
+        "knex:seed": "yarn knex seed:run --knexfile ./src/knexfile.js"
+    },
+    "author": "Mikis Woodwinter",
+    "dependencies": {
+        "@babel/runtime": "^7.4.4",
+        "body-parser": "^1.18.3",
+        "cors": "^2.8.5",
+        "dotenv": "^6.2.0",
+        "express": "^4.16.4",
+        "http-errors": "^1.7.2",
+        "knex": "^0.18.3",
+        "sqlite3": "^4.0.9"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.3.3",
+        "@babel/node": "^7.5.0",
+        "@babel/plugin-proposal-class-properties": "^7.4.4",
+        "@babel/plugin-transform-runtime": "^7.4.4",
+        "@babel/preset-env": "^7.3.1",
+        "nodemon": "^1.18.10"
+    }
+}
