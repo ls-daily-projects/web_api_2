@@ -60,7 +60,7 @@ apiRouter.post("/posts/:postId/comments", async (req, res, next) => {
     }
 })
 
-apiRouter.get("/posts", async (req, res, next) => {
+apiRouter.get("/posts", async (_req, res, next) => {
     try {
         const posts = await find()
         res.json(posts)
