@@ -1,6 +1,6 @@
 import { Router } from "express"
-import { BadRequest, InternalServerError } from "http-errors"
-import { insert, findById } from "../model"
+import { BadRequest, InternalServerError, NotFound } from "http-errors"
+import { insert, findById, insertComment, findCommentById } from "../model"
 
 const apiRouter = Router()
 
@@ -22,6 +22,33 @@ apiRouter.post("/posts", async (req, res, next) => {
         next(
             InternalServerError(
                 "There was an error while saving the post to the database"
+            )
+        )
+    }
+})
+
+apiRouter.post("/posts/:postId/comments", async (req, res, next) => {
+    const { text } = req.body
+    const { postId } = req.params
+
+    if (!text) return next(BadRequest("Please provide text for the comment."))
+
+    try {
+        const foundPosts = await findById(postId)
+
+        if (foundPosts.length < 1)
+            return next(
+                NotFound("The post with the specified ID does not exist.")
+            )
+
+        const { id } = await insertComment({ post_id: postId, text })
+        const [newComment] = await findCommentById(id)
+        res.status(201).json(newComment)
+    } catch (error) {
+        console.log(error)
+        next(
+            InternalServerError(
+                "There was an error while saving the comment to the database"
             )
         )
     }
