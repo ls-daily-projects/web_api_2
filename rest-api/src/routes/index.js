@@ -72,4 +72,24 @@ apiRouter.get("/posts", async (_req, res, next) => {
     }
 })
 
+apiRouter.get("/posts/:postId", async (req, res, next) => {
+    const { postId } = req.params
+
+    try {
+        const [post] = await findById(postId)
+
+        if (!post)
+            return next(
+                NotFound("The post with the specified ID does not exist.")
+            )
+
+        res.json(post)
+    } catch (error) {
+        console.log(error)
+        next(
+            InternalServerError("The posts information could not be retrieved.")
+        )
+    }
+})
+
 export default apiRouter
