@@ -6,7 +6,8 @@ import {
     insertComment,
     findCommentById,
     find,
-    findPostComments
+    findPostComments,
+    remove
 } from "../model"
 
 const apiRouter = Router()
@@ -106,6 +107,27 @@ apiRouter.get("/posts/:postId/comments", async (req, res, next) => {
 
         const comments = await findPostComments(postId)
         res.json(comments)
+    } catch (error) {
+        console.log(error)
+        next(
+            InternalServerError("The posts information could not be retrieved.")
+        )
+    }
+})
+
+apiRouter.delete("/posts/:postId", async (req, res, next) => {
+    const { postId } = req.params
+
+    try {
+        const [post] = await findById(postId)
+
+        if (!post)
+            return next(
+                NotFound("The post with the specified ID does not exist.")
+            )
+
+        await remove(postId)
+        res.sendStatus(200)
     } catch (error) {
         console.log(error)
         next(
