@@ -1,6 +1,12 @@
 import { Router } from "express"
 import { BadRequest, InternalServerError, NotFound } from "http-errors"
-import { insert, findById, insertComment, findCommentById } from "../model"
+import {
+    insert,
+    findById,
+    insertComment,
+    findCommentById,
+    find
+} from "../model"
 
 const apiRouter = Router()
 
@@ -50,6 +56,18 @@ apiRouter.post("/posts/:postId/comments", async (req, res, next) => {
             InternalServerError(
                 "There was an error while saving the comment to the database"
             )
+        )
+    }
+})
+
+apiRouter.get("/posts", async (req, res, next) => {
+    try {
+        const posts = await find()
+        res.json(posts)
+    } catch (error) {
+        console.log(error)
+        next(
+            InternalServerError("The posts information could not be retrieved.")
         )
     }
 })
